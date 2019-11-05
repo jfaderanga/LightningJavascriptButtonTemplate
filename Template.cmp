@@ -1,0 +1,23 @@
+<aura:component implements="force:hasRecordId,force:lightningQuickActionWithoutHeader">
+
+    <!-- Quick Action Default Style Override -->
+    <aura:html tag="style">
+        .cuf-content {
+            padding: 0 !important;
+        }
+        .slds-p-around--medium {
+            padding: 0 !important;
+        }       
+        .slds-modal__content {
+            overflow-y: hidden !important;
+            height: unset !important;
+            max-height: unset !important;
+        }
+        .slds-backdrop {
+        	display: none !important;
+        }
+    </aura:html>
+    <aura:attribute name="recordId" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+
+</aura:component>
