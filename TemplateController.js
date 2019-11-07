@@ -1,42 +1,34 @@
 ({
 	init : function(component, event, helper) {
         
-        var copyString = function (str) {
-
-            var elem = document.createElement('textarea');
-            elem.value = str;
+		var isSure = confirm("Photo will be deleted, are you sure?");
         
-            document.body.appendChild(elem);
-            elem.select();
-            
-            document.execCommand('copy');
-            document.body.removeChild(elem);
-        }
+        if (!isSure) return;
         
-        var serverAction = component.get('c.serverAction');
+        var serverDelete = component.get("c.deleteExistingPhoto");
         
-        serverAction.setParams({recordId : component.get('v.recordId')});
+        serverDelete.setParams({productId : component.get("v.recordId")});
         
-        serverAction.setCallback(this, function(response) {
+        serverDelete.setCallback(this, function(response) {
             
            	var toastEvent = $A.get("e.force:showToast");
             
-            if (response.getState() === 'SUCCESS') {
-				
-                var resp = JSON.stringify(response.getReturnValue());
-                resp = JSON.parse(resp);
+            if (response.getState() === "SUCCESS") {
                 
-                var textToCopy = resp.Name + '-' + resp.Email;
+            	toastEvent.setParams({"type" : "success", "title": "Success!", "message": "Photo has been deleted"});
+                toastEvent.fire();
+     			
+                $A.get("e.force:refreshView").fire();
                 
-                copyString(textToCopy);
-                
-            	toastEvent.setParams({"type" : 'success', "title": 'Success!', "message": textToCopy + ' was Copied!'});
             } else {
-                toastEvent.setParams({"type" : 'error', "title": 'Unexpected error occurred.', "message": 'Unexpected error occurred.'});
+                toastEvent.setParams({"type" : "error", "title": "Unexpected error occurred.", "message": "Unexpected error occurred."});
             }
+
+            component.set("v.doneAllAction", true);
+
             toastEvent.fire();
         });
 		
-        $A.enqueueAction(serverAction);
+        $A.enqueueAction(serverDelete);
 	}
 })
